@@ -1,0 +1,31 @@
+<!doctype html><meta charset="utf-8"><title>RainClass 本地模拟课堂</title>
+<style>body{font:18px sans-serif;max-width:900px;margin:40px auto;background:#eef3fa}button,select{padding:10px;margin:5px}section{background:white;padding:24px;margin:16px}label{display:block}</style>
+<h1>RainClass · 本地模拟课堂</h1><div id="teacher">
+<button onclick="send({action:'start'})">开始课程</button><button onclick="send({action:'end'})">结束课程</button>
+<button onclick="send({action:'ppt'})">下一页 PPT（含 A/B/C/D）</button>
+<select id="kind"><option value="single">单选</option><option value="multiple">多选</option><option value="blank">填空</option><option value="essay">简答</option></select>
+<button onclick="send({action:'publish',type:kind.value})">发布新题</button>
+<button onclick="send({action:'close'})">提前收题</button><button onclick="send({action:'extend',seconds:120})">延时至120秒</button>
+<button onclick="send({action:'online',value:false});setTimeout(()=>send({action:'online',value:true}),5000)">断线5秒</button>
+<button onclick="send({action:'delay',ms:1500})">网页延迟1.5秒</button><button onclick="send({action:'delay',ms:0})">恢复速度</button>
+</div><p id="status"></p><section id="slide"></section><p id="countdown">剩余时间未知</p><section id="exercise"></section><p id="receipt"></p>
+<script>
+if(location.pathname==='/student')document.querySelector('#teacher').hidden=true;
+async function send(d){await fetch('/control',{method:'POST',body:JSON.stringify(d)})}
+let last='';
+async function refresh(){try{let res=await fetch('/state');if(!res.ok)throw Error();let s=await res.json();let observed=s.observed_at;delete s.observed_at;let serialized=JSON.stringify(s);if(serialized===last){if(window.classroomState)window.classroomState.observed_at=observed;return;}last=serialized;
+s.observed_at=observed;window.classroomState=s;document.querySelector('#status').textContent=s.course_active?'正在上课 · 模拟环境':'暂无课程';
+document.querySelector('#slide').textContent='普通 PPT 第 '+s.slide+' 页：讨论 A/B/C/D，请思考问题（非互动题）';
+let el=document.querySelector('#exercise');el.replaceChildren();let q=s.question;
+if(s.course_active && q && !q.closed){el.dataset.formal='exercise';el.dataset.instance=q.id;
+if(q.submitted){document.querySelector('#receipt').textContent='模拟提交成功：'+JSON.stringify(q.receipt);return;}document.querySelector('#receipt').textContent='';
+let h=document.createElement('h2');h.textContent=q.stem;el.append(h);
+if(q.type==='essay'){let input=document.createElement('textarea');input.placeholder='简答题（本地模拟）';el.append(input)}
+else if(q.type==='blank'){for(let i=0;i<q.blank_count;i++)el.append(document.createElement('input'))}
+else if(['single','multiple'].includes(q.type)){q.options.forEach(x=>{let l=document.createElement('label'),i=document.createElement('input');i.type=q.type==='single'?'radio':'checkbox';i.name='answer';i.value=String.fromCharCode(65+q.options.indexOf(x));l.append(i,document.createTextNode(x));el.append(l)})}
+let submit=document.createElement('button');submit.id='mock-submit';submit.textContent='提交到本地模拟课堂';submit.onclick=async()=>{let answers=q.type==='blank'?Array.from(el.querySelectorAll('input')).map(x=>x.value):Array.from(el.querySelectorAll('input:checked')).map(x=>x.value);let res=await fetch('/submit',{method:'POST',body:JSON.stringify({instance_id:q.id,answers})});document.querySelector('#receipt').textContent=res.ok?'模拟提交成功':'模拟提交被拒绝';refresh()};el.append(submit);
+}else{delete el.dataset.formal;delete el.dataset.instance}
+}catch(e){document.querySelector('#status').textContent='断开恢复中';window.classroomState={online:false}}
+}
+refresh();setInterval(refresh,300);setInterval(()=>{let s=window.classroomState||{},q=s.question||{};document.querySelector('#countdown').textContent=s.online&&s.course_active&&!q.closed&&!q.submitted&&Number.isFinite(q.deadline)?'剩余 '+Math.max(0,Math.ceil(q.deadline-Date.now()/1000))+' 秒（模拟教师截止时间）':'剩余时间未知/题目已关闭';},200);
+</script>

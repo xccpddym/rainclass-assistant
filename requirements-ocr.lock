@@ -1,0 +1,16 @@
+# Tested offline OCR dependency versions. Installation target: .local/ocr-runtime
+rapidocr==3.10.0
+onnxruntime==1.31.1
+numpy==2.3.5
+# Headless wheel for the OpenCV 4.10 API used by the tested local runtime.
+opencv-python-headless==4.10.0.84
+pyclipper==1.4.0
+Shapely==2.2.0
+PyYAML==6.0.2
+Pillow==12.3.0
+tqdm==4.70.1
+omegaconf==2.3.0
+antlr4-python3-runtime==4.9.3
+requests==2.34.2
+colorlog==6.12.0
+six==1.17.0

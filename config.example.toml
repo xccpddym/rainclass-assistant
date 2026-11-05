@@ -1,0 +1,24 @@
+[browser]
+headless = true
+health_interval = 0.5
+[monitor]
+mode = "review"
+# Real classroom modes and automatic answering are controlled in Classroom Settings.
+
+[ai]
+budget = 0.5
+# Real classroom requests have no count cap. Its separate budget switch is saved in the UI.
+# Real panel has a separate enable checkbox; simulation checkbox does not enable real AI.
+# DeepSeek profile; no secret is stored here. Set DEEPSEEK_API_KEY on this computer.
+[[ai.profiles]]
+base_url = "https://api.deepseek.com"
+model = "deepseek-flash"
+key_env = "DEEPSEEK_API_KEY"
+timeout = 20
+# input_price = 1.0 # currency units per million tokens
+# output_price = 2.0
+max_request_cost = 0.1 # conservative per-attempt reservation, not actual billing
+
+[timing]
+threshold = 10
+reminders = [30, 20, 10]
