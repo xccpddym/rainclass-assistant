@@ -1,91 +1,72 @@
+<div align="center">
+
 # RainClass 课堂 AI 助手
 
-面向 Windows 的雨课堂学生端桌面助手。使用独立的 Microsoft Edge 会话监测正式互动题，以本地 OCR 提取题目，支持人工核对或 DeepSeek 对照原图核对，并按用户选择分析、填写和提交答案。
+**课堂题目识别、AI 核对与作答，一个窗口完成。**
 
-当前版本 **1.0.0**。已在一台 Windows 11 x64 电脑上验证；其他机器、平台改版及网络异常场景仍需自行验证。
+Windows 桌面助手 · 离线 OCR · DeepSeek · 人工核对 / 自动作答
 
-## 功能
+[下载 Windows 版](https://github.com/xccpddym/rainclass-assistant/releases/latest) · [使用说明](使用说明.md) · [问题反馈](https://github.com/xccpddym/rainclass-assistant/issues)
 
-- 正式题目监测与新题跟随，普通 PPT 不当作互动题。
-- 单选、多选、填空及文字主观题处理。
-- 本地 RapidOCR / ONNX CPU 识别，模型不在运行时偷偷下载。
-- 人工核对模式与 AI 原图核对模式。
-- 主观题逐题授权或自动处理；可单独选择只填写、不提交。
-- 新题弹窗、倒计时弹窗与主观题声音提醒，开关独立且重启记忆。
-- 独立学生浏览器资料、暂停/恢复、有限刷新与设置持久化。
-- 本地结果缓存、历史和用量统计；可选单课金额预算 0.1～10 元，无请求次数上限。
-- 题目身份、图像、倒计时、编辑器映射与提交台账检查；提交结果未知时不自动重复提交。
+</div>
 
-AI 答案可能错误。请只在你有权使用 AI 和自动化的课堂或测试环境使用，并遵守教师、学校及平台规则。
+---
 
-## 下载 EXE
+RainClass 通过独立的 Microsoft Edge 学生端监测雨课堂正式互动题，将题目原图、OCR 文本和 AI 分析集中展示。你可以先核对再决定是否使用 AI，也可以开启自动核对、填写与提交。
 
-在 [Releases](https://github.com/xccpddym/rainclass-assistant/releases) 下载 Windows x64 ZIP，解压整个文件夹，再双击 `RainClassAssistant.exe`。
+## 功能一览
 
-- 无需安装 Python；需要 Microsoft Edge。
-- 请保留 `_internal` 文件夹，不能只复制 EXE。
-- 同一专用浏览器资料不要由源码版和 EXE 同时使用。
-- 关闭窗口会隐藏到托盘，真正退出请使用托盘菜单或“本地模拟 → 退出软件”。
-- 文件夹内提供 HTML、TXT、Markdown 三种使用说明。
+| 功能 | 你可以做什么 |
+| :--- | :--- |
+| 课堂监测 | 跟随新发布的互动题，区分普通 PPT 与正式习题 |
+| 题目识别 | 本地 OCR 提取题干、选项和填空；保留原图方便核对 |
+| AI 分析 | 使用 DeepSeek 对照原图核对 OCR，再生成答案与解析 |
+| 多题型作答 | 处理单选、多选、填空和文字主观题 |
+| 灵活控制 | 人工核对后作答，或自动核对、填写并提交；主观题支持逐题授权 |
+| 课堂提醒 | 新题与倒计时弹窗、主观题提示音，各自独立开关 |
+| 设置与用量 | 重启恢复设置，查看历史与用量，可选单课金额预算 |
 
-## 配置 DeepSeek
+## 选择你的作答方式
 
-将 `config.example.toml` 复制为 `config.toml`。源码运行放在项目根目录；EXE 使用其同目录的配置。发行 ZIP 已带一份无密钥的公开配置模板。
+**人工核对**：查看原图 → 核对题目 → AI 分析 → 按设置填写、提交。主观题可逐题选择允许 AI 或自己作答。
 
-默认模型为 `deepseek-flash`，地址为 `https://api.deepseek.com`，Key 仅从 **`DEEPSEEK_API_KEY` 环境变量**读取。不要把 Key 写进代码、提交、Issue 或截图。修改配置后重启。
+**自动模式**：检测新题 → AI 对照原图核对 → 分析答案 → 填写并提交。主观题也可设置为只填写，由你最后提交。
 
-首次使用默认不开启真实 AI；在“课堂设置”中选择模式并开启相关开关。自动原图核对会把当前题图与 OCR 文本发送给配置的模型，文字分析发送题目文本。金额预算按保守预留控制，并非供应商账单的硬限额；关闭金额限制也不代表免费。
+题目变化、内容无法核实或控件异常时会停止自动作答；提交结果未知时不会自动重复提交。
 
-## 从源码运行
+## 快速开始
 
-环境：Windows x64、Python 3.12 或 3.13、Microsoft Edge。
+### 1. 下载并解压
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[test]"
-Copy-Item config.example.toml config.toml
-powershell -File setup-ocr.ps1
-python scripts/setup-models.py
-$env:PYTHONPATH = 'src'
-python -m rainclass --real-readonly
-```
+从 [最新版本](https://github.com/xccpddym/rainclass-assistant/releases/latest) 下载 Windows x64 ZIP，完整解压后运行 `RainClassAssistant.exe`。
 
-`setup-ocr.ps1` 将依赖装到项目内 `.local/ocr-runtime`；模型安装脚本从 RapidOCR 公布的源下载三个模型并校验 SHA-256。首次下载需要联网，安装后 OCR 本身离线运行。不要使用不明来源的模型文件。
+无需安装 Python，需要 **Windows x64 和 Microsoft Edge**。请保留 `_internal` 文件夹，不要只复制 EXE。
 
-真实学生端在独立 Edge 窗口中登录。账号切换、主观题策略、预算和排障详见 [使用说明](使用说明.md)。
+### 2. 配置 AI
 
-## 测试与打包
+在 Windows 用户环境变量中配置 **`DEEPSEEK_API_KEY`**，然后重新启动软件。发行包已附配置模板，默认模型为 `deepseek-flash`；已有同名环境变量可以直接沿用。
 
-```powershell
-$env:PYTHONPATH = 'src'
-$env:QT_QPA_PLATFORM = 'offscreen'
-python -m pytest tests -q --basetemp .local/pytest
-python -m pip install -r requirements-build.lock
-powershell -File scripts/build-release.ps1 -Python python
-python scripts/prepare_v1_release.py
-```
+### 3. 登录课堂
 
-产物在 `dist/v1.0.0/RainClassAssistant`。打包过程使用本机依赖和已下载的模型，不会复制个人 `config.toml`、账号资料或历史数据库。打包后应在独立数据目录执行模拟自检和离线 OCR 自检，再创建发行 ZIP。
+在助手打开的专用 Edge 窗口中登录学生账号，进入课堂。专用会话与日常使用的 Edge 资料分开。
 
-```powershell
-.\dist\v1.0.0\RainClassAssistant\RainClassAssistant.exe --smoke-test --smoke-report .local\exe-release-check\smoke.json --data-dir .local\exe-release-check\smoke-data
-.\dist\v1.0.0\RainClassAssistant\RainClassAssistant.exe --ocr-self-test-report .local\exe-release-check\ocr.json
-python scripts/prepare_v1_release.py --archive
-```
+### 4. 选择模式
 
-仓库测试使用本地模拟页面和合成题目；模型接口测试使用本地假服务，不需要真实 Key。打包自检通过不等于其他设备或所有真实课堂场景通过。
+打开 **课堂设置**，选择作答方式，按需启用真实 AI、自动作答和提醒。首次使用建议先人工核对，确认当前课堂的识别与填写正常后再开启自动模式。
 
-## 隐私与已知限制
+> AI 调用会产生供应商费用。金额预算可设为 0.1～10 元，也可关闭；真实课堂不设请求次数上限。
 
-运行数据默认在 `%LOCALAPPDATA%/RainClassAssistant`。该目录、浏览器资料、个人配置、真实题图、诊断日志和原开发历史均未上传。详见 [隐私说明](docs/PRIVACY.md)。
+## 文档与帮助
 
-- 自动模式的题图和文本会发到用户配置的 AI 服务；本地 OCR 不发送图片。
-- 登录 Cookie 保存在专用 Edge 资料目录；不要把资料目录分享给别人。
-- 取消预算后仍需自行关注供应商费用。
-- 真实页面改版、遮挡、剩余时间不足等会停止自动作答。
-- Edge 恢复/刷新偶尔可能显示到前台；锁屏、睡眠、断网情形不保证可靠。
-- 主观题仅支持文字填写，不自动上传附件。
-- 便携版未做代码签名，不提供安装器和自动更新。
+- [使用说明](使用说明.md)：账号切换、作答设置、提醒、预算与常见问题。
+- [开发与构建](docs/DEVELOPMENT.md)：源码运行、模型准备、测试与 EXE 打包。
+- [隐私说明](docs/PRIVACY.md)：本地数据、AI 数据发送范围及反馈注意事项。
+- [已知限制](docs/KNOWN_LIMITATIONS.md)：运行环境、平台适配和异常场景。
 
-发行包附第三方依赖许可及模型说明。此项目与雨课堂、DeepSeek 或其关联方没有官方隶属或背书关系。
+## 使用须知
+
+本版已在 Windows 11 x64 上验证，其他环境仍需测试。AI 答案需要自行判断，请在允许使用 AI 与自动化的课堂或测试环境中使用。
+
+自动原图核对会将当前题图和题目文本发送至配置的 AI 服务；本地 OCR 离线运行。Key 仅从环境变量读取，请勿提交到仓库或问题反馈中。
+
+本项目与雨课堂、DeepSeek 无官方隶属或背书关系。
