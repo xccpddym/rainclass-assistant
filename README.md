@@ -8,6 +8,7 @@
 ![platform](https://img.shields.io/badge/platform-Windows%20x64-1f6feb)
 ![AI](https://img.shields.io/badge/AI-DeepSeek-4d6bfe)
 ![OCR](https://img.shields.io/badge/OCR-本地离线-16a34a)
+![license](https://img.shields.io/badge/license-MIT-16a34a)
 
 [下载 Windows 版](https://github.com/xccpddym/rainclass-assistant/releases/latest) ·
 [使用说明](使用说明.md) ·
@@ -109,6 +110,10 @@
 - **[开发与构建](docs/DEVELOPMENT.md)** —— 源码运行、模块结构、测试、OCR 模型与 EXE 打包发行
 - **[隐私说明](docs/PRIVACY.md)** —— 本地数据、发送给 AI 的内容、仓库收录范围与反馈注意事项
 - **[已知限制](docs/KNOWN_LIMITATIONS.md)** —— 环境兼容、平台改版、自动化边界
+
+## 许可
+
+以 [MIT 许可证](LICENSE) 发布：可以自由使用、修改、再分发，需保留版权与许可声明。发行包内的第三方依赖与 OCR 模型按各自许可证分发，详见包中 `THIRD_PARTY_LICENSES\` 与 `THIRD_PARTY_NOTICES.json`。
 
 ## 边界与免责
 
